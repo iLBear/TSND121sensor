@@ -64,9 +64,9 @@ void TSNDcommand::startMeasure(int fd, int measure_sec){
     sendData[10] = 0x0c;        //終了年
     sendData[11] = 0x0c;        //終了月
     sendData[12] = 0x01;        //終了日
-    sendData[13] = 0x00;        //終了時
-    sendData[14] = 0x00;        //終了分
-    sendData[15] = measure_sec; //終了秒
+    sendData[13] = measure_sec/3600;	//終了時
+    sendData[14] = (measure_sec/60)%60; //終了分
+    sendData[15] = measure_sec%60;		//終了秒
     sendData[16] = 0x00;
     makeBCC(sendData);
     write(fd, sendData, commandLength);
