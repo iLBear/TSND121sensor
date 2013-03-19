@@ -27,7 +27,10 @@ public:
 	int pressure;		//(TSNDからの)気圧[Pa]
     int accel[3];		//(TSNDからの)加速度[mG]
 	int initPressure;	//初期状態の気圧[Pa]
-	
+	int terminalIO[4];	//外部拡張端子1~4入出力レベル[0:Low, 1:High](外部拡張端子モードに1~9が設定されている時のみ有効)
+	int terminalAD[2];	//外部拡張端子3,4AD値[0~4095](外部拡張端子モードに10が設定されている時のみ有効)
+	int terminalEdge[4];//外部拡張端子エッジ検出有無(外部拡張端子モードに1~7が設定されている時のみ有効)
+	int optionButton;	//オプションボタンエッジ検出有無(オプションボタン操作モードが3,4の時のみ有効)
 	
 	//TSNDからの値を基に計算する値
 	float rotate[3];	//本体回転角度[deg]

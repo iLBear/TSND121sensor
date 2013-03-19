@@ -26,16 +26,18 @@ public:
 	void getTime(int fd);	//0x12
     void startMeasure(int fd, int second);			//0x13
     void stopMeasure(int fd);						//0x15
-    
     void setAccelMeasurement(int fd, int cycle_ms, int average, int recordAverage);	//0x16
 	void getAccelMeasurement(int fd);		//0x17
     void setGeometricMeasurement(int fd, int cycle_ms, int average, int recordAverage);	//0x18
     void setPressureMeasurement(int fd, int cycle_ms, int average, int recordAverage);	//0x1a
 	void setBatteryMeasurement(int fd, bool send, bool record);	//0x1c
+	void setIOMeasurement(int fd, int cycle_ms, int average, int recordAverage, bool sendEdgeData, bool recordEdgaData);	//0x1e
+	
 	void setAccelRange(int fd, int range);	//0x22
 	void collectAccelMeasurement(int fd, int xt, int yt, int zt, int xx, int yy, int zz);	//0x24
     void setOptionButtonMode(int fd, int mode);	//0x2c
     
+	void setExternalIO(int fd, int terminal1, int terminal2, int terminal3, int terminal4);	//0x30
 	void setBuzzerVolume(int fd, int volume);	//0x32
 	void playBuzzer(int fd, int pattern);		//0x34
     void getBatteryRemain(int fd);	//0x3b

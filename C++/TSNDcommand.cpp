@@ -42,7 +42,7 @@ void TSNDcommand::getTime(int fd){
     sendData[2] = 0x00;
     makeBCC(sendData);
     if(write(fd, sendData, commandLength) < 0){
-        printf("err\n");  
+        printf("err getTime\n");  
     }else{
         printf("- send[0x12]: getTime\n");
     }
@@ -64,9 +64,9 @@ void TSNDcommand::startMeasure(int fd, int measure_sec){
     sendData[10] = 0x0c;        //終了年
     sendData[11] = 0x0c;        //終了月
     sendData[12] = 0x01;        //終了日
-    sendData[13] = measure_sec/3600;	//終了時
-    sendData[14] = (measure_sec/60)%60; //終了分
-    sendData[15] = measure_sec%60;		//終了秒
+    sendData[13] = 0x00;        //終了時
+    sendData[14] = measure_sec/60;     //終了分
+    sendData[15] = measure_sec%60; //終了秒
     sendData[16] = 0x00;
     makeBCC(sendData);
     write(fd, sendData, commandLength);
@@ -138,6 +138,39 @@ void TSNDcommand::setPressureMeasurement(int fd, int cycle_ms, int average, int 
     makeBCC(sendData);
     write(fd, sendData, commandLength);
     printf("- send[0x1a]: setPressureMeasurement\n");
+}
+
+/*===============================
+ 0x1E
+ 外部拡張端子計測＆エッジデータ出力設定
+ ===============================*/
+void TSNDcommand::setIOMeasurement(int fd, int cycle_ms, int average, int recordAverage, bool sendEdgeData, bool recordEdgaData){
+	cycle_ms = isValueInRange(cycle_ms, 0, 255, 20);
+	average = isValueInRange(average, 0, 255, 10);
+	recordAverage = isValueInRange(recordAverage, 0, 255, 10);
+	
+    commandLength = 8;
+    unsigned char sendData[commandLength];
+	
+    sendData[0] = 0x9a;
+    sendData[1] = 0x1e;
+    sendData[2] = cycle_ms;         //計測周期					[0:計測しない,1-255:計測周期(ms)]
+    sendData[3] = average;          //計測データ送信設定・平均回数 	[1-255回]
+    sendData[4] = recordAverage;	//データ記録設定 				[0:しない]
+	if(sendEdgeData){
+        sendData[5] = 0x01;
+    }else{
+        sendData[5] = 0x00;
+    }
+    if(recordEdgaData){
+        sendData[6] = 0x01;
+    }else{
+        sendData[6] = 0x00;
+    }
+	
+    makeBCC(sendData);
+    write(fd, sendData, commandLength);
+    printf("- send[0x1e]: setIOMeasurement\n");
 }
 
 //オプションボタン押下時の動作設定
@@ -271,10 +304,47 @@ void TSNDcommand::collectAccelMeasurement(int fd, int xt, int yt, int zt, int xx
     printf("- send[0x24]: collectAccelMeasurement\n");
 }
 
+/*=============
+ 0x30
+ 外部拡張端子設定
+ [外部端子モード凡例]
+ 0 :未使用端子
+ 1 :入力端子
+ 2 :立ち下りエッジ検出機能付き入力端子
+ 3 :立ち上りエッジ検出機能付き入力端子
+ 4 :両エッジ検出機能付き入力端子
+ 5 :立ち下りエッジ検出＋チャタリング除去機能付き入力端子
+ 6 :立ち上りエッジ検出＋チャタリング除去機能付き入力端子
+ 7 :両エッジ検出＋チャタリング除去機能付き入力端子
+ 8 :Low入力
+ 9 :High入力
+ 10:AD入力（外部端子3, 4のみ）
+ =============*/
+void TSNDcommand::setExternalIO(int fd, int terminal1, int terminal2, int terminal3, int terminal4){
+	terminal1 = isValueInRange(terminal1, 0, 9, 0);
+	terminal2 = isValueInRange(terminal2, 0, 9, 0);
+	terminal3 = isValueInRange(terminal3, 0, 10, 0);
+	terminal4 = isValueInRange(terminal4, 0, 10, 0);
+	
+	commandLength = 7;
+	unsigned char sendData[commandLength];
+	
+    sendData[0] = 0x9a;
+    sendData[1] = 0x30;
+    sendData[2] = terminal1;    //外部端子1モード
+    sendData[3] = terminal2;    //外部端子2モード
+    sendData[4] = terminal3;	//外部端子3モード
+	sendData[5] = terminal4;	//外部端子4モード
+	
+    makeBCC(sendData);
+    write(fd, sendData, commandLength);
+    printf("- send[0x30]: setExternalIO\n");
+
+}
+
 //ブザー音量設定
 void TSNDcommand::setBuzzerVolume(int fd, int volume){
 	volume = isValueInRange(volume, 0, 2, 0);
-//	printf("++++++vol:%d\n", volume);
 	
     commandLength = 4;
     unsigned char sendData[commandLength];
@@ -289,7 +359,6 @@ void TSNDcommand::setBuzzerVolume(int fd, int volume){
 //ブザー再生
 void TSNDcommand::playBuzzer(int fd, int pattern){
 	pattern = isValueInRange(pattern, 0, 7, 0);
-	//	printf("++++++vol:%d\n", volume);
 	
     commandLength = 4;
     unsigned char sendData[commandLength];
