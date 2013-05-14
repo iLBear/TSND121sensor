@@ -26,6 +26,13 @@ public:
 	//TSNDから送られてくる値
 	int pressure;		//(TSNDからの)気圧[Pa]
     int accel[3];		//(TSNDからの)加速度[mG]
+	int geometric[3];	//地磁気[uT]
+	float geo_norm[3];	//正規化した地磁気値
+	float g_theta;		//地磁気から求める水平方向の角度
+	float g_phi;		//地磁気から求める垂直方向の角度
+	float pitch;		//ピッチ角
+	float roll;			//ロール角
+	float heading;		//方位角
 	int initPressure;	//初期状態の気圧[Pa]
 	int terminalIO[4];	//外部拡張端子1~4入出力レベル[0:Low, 1:High](外部拡張端子モードに1~9が設定されている時のみ有効)
 	int terminalAD[2];	//外部拡張端子3,4AD値[0~4095](外部拡張端子モードに10が設定されている時のみ有効)

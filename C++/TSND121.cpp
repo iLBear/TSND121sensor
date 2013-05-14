@@ -47,7 +47,7 @@ void TSND121::calcDistFromAccel(char xyz){
 		//		       = accel*9.8*0.001*time[cm/s] + velocity[cm/s]
 		velocity[axis] = accel[axis]*9.8*0.001*time;// + velocity[axis];
 		
-		printf("time:%.3f, dist:%.3f, vel:%.3f\n", time, distance[axis], velocity[axis]);
+//		printf("time:%.3f, dist:%.3f, vel:%.3f\n", time, distance[axis], velocity[axis]);
 	}
 }
 
